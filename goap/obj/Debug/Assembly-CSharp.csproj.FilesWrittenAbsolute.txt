@@ -1,0 +1,17 @@
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Assembly-CSharp.dll.mdb
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Assembly-CSharp.dll
+/Users/robertwells/Documents/goap/goap/obj/Debug/Assembly-CSharp.dll
+/Users/robertwells/Documents/goap/goap/obj/Debug/Assembly-CSharp.dll.mdb
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/UnityEngine.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/UnityEditor.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Mono.Cecil.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Unity.DataContract.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/robertwells/Documents/goap/goap/Temp/bin/Debug/Mono.Cecil.Mdb.dll
