@@ -80,6 +80,7 @@ public sealed class GoapAgent : MonoBehaviour
 
 			// Plan
 			Queue<GoapAction> plan = planner.Plan (gameObject, m_AvailableActions, worldState, goal);
+
 			if (plan != null) {
 				// we have a plan, hooray!
 				m_CurrentActions = plan;

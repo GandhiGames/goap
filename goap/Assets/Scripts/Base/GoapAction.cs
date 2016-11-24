@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class GoapAction
+public abstract class GoapAction : MonoBehaviour
 {
 	/* The cost of performing the action. 
 	 * Figure out a weight that suits the action. 
@@ -39,12 +39,15 @@ public abstract class GoapAction
 	/**
 	 * Reset any variables that need to be reset before planning happens again.
 	 */
-	public virtual void Reset ()
+	public void Reset ()
 	{
 		m_InRange = false;
 		target = null;
-		Reset ();
+
+        DoReset();
 	}
+
+
 
 
 	/**
@@ -136,7 +139,7 @@ public abstract class GoapAction
 		*/
 	}
 
-
+    protected abstract void DoReset();
 
 
 }
