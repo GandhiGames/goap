@@ -92,7 +92,6 @@ public class GoapPlanner
 
 			// if the parent state has the conditions for this action's preconditions, we can use it here
 			if (InState (action.preconditions, parent.state)) {
-                Debug.Log("Here");
 				// apply the action's effects to the parent state
 				Dictionary<string,object> currentState = PopulateState (parent.state, action.effects);
 				//Debug.Log(GoapAgent.prettyPrint(currentState));
@@ -136,7 +135,6 @@ public class GoapPlanner
 	 */
 	private bool InState (Dictionary<string,object> test, Dictionary<string,object> state)
 	{
-
 		foreach (var t in test) {
 
 			object valueObj;
@@ -148,7 +146,7 @@ public class GoapPlanner
 			}
 
 			if (!valueObj.Equals (t.Value)) {
-					return false;
+				return false;
 			}	
 		}
 

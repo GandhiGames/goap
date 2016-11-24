@@ -5,18 +5,18 @@ public abstract class GoapLabourer : MonoBehaviour, Goap
 {
     public float moveSpeed = 1f;
 
-    private Inventory m_Inventory;
+	private Inventory m_Inventory;
 
     void Awake()
     {
-        m_Inventory = GetComponent<Inventory>();
+		m_Inventory = GetComponent<Inventory>();
     }
 
     public Dictionary<string, object> GetWorldState()
     {
         var worldData = new Dictionary<string, object>();
 
-        worldData.Add("hasLogs", (m_Inventory.logs > 0));
+		worldData.Add("hasLogs", (m_Inventory.GetResourceCount(ResourceType.Wood) > 0));
 
         return worldData;
     }

@@ -63,8 +63,8 @@ public class GoapCollectWoodAction : GoapAction
 
         if (Time.time - m_StartTime > workDurationSecs)
         {
-            var inventory = agent.GetComponent<Inventory>();
-            inventory.logs += 1;
+			var inventory = agent.GetComponent<Inventory>();
+			inventory.IncrementResourceCount(ResourceType.Wood, 1);
             m_Collected = true;
         }
 

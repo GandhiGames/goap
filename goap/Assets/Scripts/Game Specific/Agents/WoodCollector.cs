@@ -13,7 +13,7 @@ public class WoodCollector : GoapLabourer
     {
         var goal = new Dictionary<string, object>();
 
-        goal.Add("collectFirewood", true);
+        goal.Add("collectLogs", true);
 
         return goal;
     }
