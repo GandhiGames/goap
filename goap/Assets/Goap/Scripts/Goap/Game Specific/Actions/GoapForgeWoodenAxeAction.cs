@@ -54,7 +54,10 @@ public class GoapForgeWoodenAxeAction : GoapAction
             var inventory = agent.GetComponent<Inventory>();
 
             inventory.SetResourceCount(ResourceType.Wood, 0);
-            inventory.IncrementResourceCount(ResourceType.WoodenAxe, 1);
+
+            var dispenser = agent.GetComponent<ToolDispenser>();
+
+            dispenser.IncrementToolCount(ToolType.WoodenAxe, 1);
 
             m_Forged = true;
         }

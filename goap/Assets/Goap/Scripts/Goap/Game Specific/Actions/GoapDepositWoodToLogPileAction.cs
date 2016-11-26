@@ -36,21 +36,18 @@ public class GoapDepositWoodToLogPileAction : GoapAction
 
         if (stacks.Length == 0)
         {
-            print("deposit wood: " + false);
             return false;
         }
 
         var closest = GetClosestWoodDeposit(stacks, agent);
         if (closest == null)
         {
-            print("deposit wood: " + false);
             return false;
         }
 
         m_TargetDeposit = closest;
         target = m_TargetDeposit.transform;
 
-        print("deposit wood: " + true);
         return true;
     }
 

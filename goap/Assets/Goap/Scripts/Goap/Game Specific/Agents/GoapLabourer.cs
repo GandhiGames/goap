@@ -4,7 +4,6 @@ using System.Collections.Generic;
 [RequireComponent(typeof(GoapMovement))]
 public abstract class GoapLabourer : MonoBehaviour, Goap
 {
-
 	private Inventory m_Inventory;
     private GoapMovement m_Movement;
 
@@ -19,6 +18,7 @@ public abstract class GoapLabourer : MonoBehaviour, Goap
         var worldData = new Dictionary<string, object>();
 
 		worldData.Add("hasLogs", (m_Inventory.GetResourceCount(ResourceType.Wood) > 0));
+        worldData.Add("hasAxe", (m_Inventory.HasToolEquipped(ToolType.WoodenAxe)));
 
         return worldData;
     }

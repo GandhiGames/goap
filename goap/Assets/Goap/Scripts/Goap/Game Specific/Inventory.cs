@@ -5,18 +5,34 @@ using System.Collections.Generic;
 public enum ResourceType
 {
 	Wood,
-	Iron,
-    WoodenAxe
+	Iron
+}
+
+public class Resource
+{
+    public int count { get; set; }
+
+    public Resource(int count)
+    {
+        this.count = count;
+    }
 }
 
 public class Inventory : MonoBehaviour
 {
+    public Tool equippedTool;
+
 	private Dictionary<ResourceType, Resource> m_Resources;
 
 	void Start ()
 	{
 		m_Resources = new Dictionary<ResourceType, Resource> ();
 	}
+
+    public bool HasToolEquipped(ToolType toolType)
+    {
+        return equippedTool != null && equippedTool.name.Equals(toolType.ToString());
+    }
 
 	public void IncrementResourceCount (ResourceType resourceType, int count)
 	{
@@ -53,16 +69,6 @@ public class Inventory : MonoBehaviour
         }
 
         return m_Resources[resourceType].count > 0;
-	}
-
-	private class Resource
-	{
-		public int count { get; set; }
-
-		public Resource (int count)
-		{
-			this.count = count;
-		}
 	}
 
 }

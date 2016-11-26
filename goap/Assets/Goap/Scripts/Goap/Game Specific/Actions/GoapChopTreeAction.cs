@@ -46,21 +46,18 @@ public class GoapChopTreeAction : GoapAction
 
         if (trees.Length == 0)
         {
-            print("chop tree: " + false);
             return false;
         }
 
         var closest = GetClosestTree(trees, agent);
         if (closest == null)
         {
-            print("chop tree: " + false);
             return false;
         }
 
         m_TargetTree = closest;
         target = m_TargetTree.transform;
 
-        print("chop tree: " + true);
         return true;
     }
 
@@ -79,7 +76,17 @@ public class GoapChopTreeAction : GoapAction
 
             var inventory = agent.GetComponent<Inventory>();
             inventory.IncrementResourceCount(ResourceType.Wood, 4);
+
+            inventory.equippedTool.Damage();
+
+            if(inventory.equippedTool.IsDestroyed())
+            {
+                inventory.equippedTool = null;
+            }
+
             m_TreeChopped = true;
+
+            
 
         }
 

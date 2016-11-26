@@ -1,29 +1,83 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
+
+public interface Tool
+{
+    string name { get; }
+    void Damage();
+    bool IsDestroyed();
+}
+
+public class WoodenAxe : Tool
+{
+    public string name { get; private set; }
+    private int m_Durability;
+    private int m_DamagePercentPerUse;
+
+    public WoodenAxe()
+    {
+        name = ToolType.WoodenAxe.ToString();
+        m_DamagePercentPerUse = 34;
+        m_Durability = 100;
+    }
+
+    public void Damage()
+    {
+        m_Durability -= m_DamagePercentPerUse;
+    }
+
+    public bool IsDestroyed()
+    {
+        return m_Durability <= 0;
+    }
+}
+
+public enum ToolType
+{
+    WoodenAxe
+}
 
 [RequireComponent(typeof(Inventory))]
 public class ToolDispenser : MonoBehaviour
 {
-    public int woodenAxeCount
+    private Dictionary<ToolType, Resource> m_Tools;
+
+    void Start()
     {
-        get
+        m_Tools = new Dictionary<ToolType, Resource>();
+    }
+
+    public void IncrementToolCount(ToolType toolType, int count)
+    {
+        if (m_Tools.ContainsKey(toolType))
         {
-            return m_Inventory.GetResourceCount(ResourceType.WoodenAxe);
+            m_Tools[toolType].count += count;
+        }
+        else
+        {
+            m_Tools.Add(toolType, new Resource(count));
         }
     }
 
-    private Inventory m_Inventory;
-
-    void Awake()
+    public int GetResourceCount(ToolType toolType)
     {
-        m_Inventory = GetComponent<Inventory>();
+        if (m_Tools.ContainsKey(toolType))
+        {
+            return m_Tools[toolType].count;
+        }
+
+        return 0;
     }
 
-    public void RetrievedWoodenAxe()
+    public Tool RetrieveWoodenAxe()
     {
-        if (woodenAxeCount > 0)
+        if (GetResourceCount(ToolType.WoodenAxe) > 0)
         {
-            m_Inventory.IncrementResourceCount(ResourceType.WoodenAxe, -1);
+            IncrementToolCount(ToolType.WoodenAxe, -1);
+
+            return new WoodenAxe();
         }
+
+        return null;
     }
 }

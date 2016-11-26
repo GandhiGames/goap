@@ -3,12 +3,20 @@ using System.Collections;
 
 public class GoapCollectAxeFromBlacksmithAction : GoapAction
 {
+    public bool startWithAxe = true;
     private bool m_HasAxe = false;
     private ToolDispenser m_ToolDispenser; // where we get the tool from
 
+    void Start()
+    {
+        if (startWithAxe)
+        {
+            GetComponent<Inventory>().equippedTool = new WoodenAxe();
+        }
+    }
+
     public GoapCollectAxeFromBlacksmithAction()
     {
-        problem with this pre condition
         AddPrecondition("hasAxe", false); // don't get a tool if we already have one
         AddEffect("hasAxe", true); // we now have a tool
     }
@@ -35,32 +43,28 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
 
         if (dispensers.Length == 0)
         {
-            print("Collect axe: " + false);
             return false;
         }
 
         var closest = GetClosestToolDispenser(dispensers, agent);
         if (closest == null)
         {
-            print("Collect axe: " + false);
             return false;
         }
 
         m_ToolDispenser = closest;
         target = m_ToolDispenser.transform;
 
-        print("Collect axe: " + true);
         return true;
     }
 
     public override bool Perform(GameObject agent)
     {
+        var axe = m_ToolDispenser.RetrieveWoodenAxe();
 
-        if (m_ToolDispenser.woodenAxeCount > 0)
+        if (axe != null)
         {
-            m_ToolDispenser.RetrievedWoodenAxe();
-
-            agent.GetComponent<Inventory>().IncrementResourceCount(ResourceType.WoodenAxe, 1);
+            agent.GetComponent<Inventory>().equippedTool = axe;
 
             m_HasAxe = true;
 
@@ -80,7 +84,7 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
 
         foreach (var dispenser in dispensers)
         {
-            if(dispenser.woodenAxeCount <= 0)
+            if(dispenser.GetResourceCount(ToolType.WoodenAxe) <= 0)
             {
                 continue;
             }
