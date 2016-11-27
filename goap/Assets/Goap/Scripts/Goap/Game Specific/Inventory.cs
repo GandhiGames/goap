@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public enum ResourceType
 {
 	Wood,
-	Iron
+	Iron,
+	Meat
 }
 
 public class Resource

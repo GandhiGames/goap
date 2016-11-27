@@ -1,15 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CutableTree : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
+public class CutableTree : WorldComponent
+{
 	
+	void Awake()
+	{
+		
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	void OnEnable()
+	{
+		register
+	}
+
+	void OnDisable()
+	{
+		unregister
 	}
 }

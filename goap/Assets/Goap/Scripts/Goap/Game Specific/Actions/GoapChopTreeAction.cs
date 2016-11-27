@@ -1,114 +1,109 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class GoapChopTreeAction : GoapAction
 {
-    public float workDurationSecs = 4f;
+	public float workDurationSecs = 4f;
 
-    private bool m_TreeChopped = false;
-    private CutableTree m_TargetTree;
-    private float m_StartTime;
-    private GoapLabourerAnimator m_Animator;
+	private bool m_TreeChopped = false;
+	private CutableTree m_TargetTree;
+	private float m_StartTime;
+	private GoapLabourerAnimator m_Animator;
+	private Inventory m_Inventory;
+	private WorldComponentDatabase m_Database;
 
-    void Awake()
-    {
-        m_Animator = GetComponent<GoapLabourerAnimator>();
-    }
+	void Awake ()
+	{
+		m_Animator = GetComponent<GoapLabourerAnimator> ();
+		m_Inventory = GetComponent<Inventory> ();
+		m_Database = FindObjectOfType<WorldComponentDatabase> ();
+	}
 
-    public GoapChopTreeAction()
-    {
-        AddPrecondition("hasAxe", true); // we need a tool to do this
-        AddPrecondition("hasLogs", false); // if we have firewood we don't want more
-        AddEffect("hasLogs", true);
-    }
-
-    protected override void DoReset()
-    {
-        m_TreeChopped = false;
-        m_TargetTree = null;
-        m_StartTime = 0f;
-    }
-
-    public override bool IsDone()
-    {
-        return m_TreeChopped;
-    }
-
-    public override bool RequiresInRange()
-    {
-        return true;
-    }
-
-    public override bool CheckProceduralPrecondition(GameObject agent)
-    {
-        var trees = UnityEngine.GameObject.FindObjectsOfType<CutableTree>();
-
-        if (trees.Length == 0)
-        {
-            return false;
-        }
-
-        var closest = GetClosestTree(trees, agent);
-        if (closest == null)
-        {
-            return false;
-        }
-
-        m_TargetTree = closest;
-        target = m_TargetTree.transform;
-
-        return true;
-    }
-
-    public override bool Perform(GameObject agent)
-    {
-        if (m_StartTime == 0)
-        {
-            m_StartTime = Time.time;
-            m_Animator.PlaySlash();
-        }
+	void Start ()
+	{
+		AddPrecondition ("hasAxe", true); // we need a tool to do this
+		AddPrecondition ("hasLogs", false); // if we have firewood we don't want more
+		AddEffect ("hasLogs", true);
+	}
 
 
-        if (Time.time - m_StartTime > workDurationSecs)
-        {
-            m_Animator.StopSlash();
+	protected override void DoReset ()
+	{
+		m_TreeChopped = false;
+		m_TargetTree = null;
+		m_StartTime = 0f;
+	}
 
-            var inventory = agent.GetComponent<Inventory>();
-            inventory.IncrementResourceCount(ResourceType.Wood, 4);
+	public override bool IsDone ()
+	{
+		return m_TreeChopped;
+	}
 
-            inventory.equippedTool.Damage();
+	public override bool RequiresInRange ()
+	{
+		return true;
+	}
 
-            if(inventory.equippedTool.IsDestroyed())
-            {
-                inventory.equippedTool = null;
-            }
+	public override void SetTarget ()
+	{
+		var closest = GetClosestTree ();
 
-            m_TreeChopped = true;
+		if (closest != null) {
+			m_TargetTree = closest;
+			target = m_TargetTree.transform;
+		}
+	}
+
+	public override bool CheckProceduralPrecondition ()
+	{
+		return m_Database.RetrieveComponents<CutableTree>().Count > 0;
+	}
+
+	public override bool Perform ()
+	{
+		if (m_StartTime == 0) {
+			m_StartTime = Time.time;
+			m_Animator.PlaySlash ();
+		}
+
+
+		if (Time.time - m_StartTime > workDurationSecs) {
+			m_Animator.StopSlash ();
+
+			m_Inventory.IncrementResourceCount (ResourceType.Wood, 4);
+
+			m_Inventory.equippedTool.Damage ();
+
+			if (m_Inventory.equippedTool.IsDestroyed ()) {
+				m_Inventory.equippedTool = null;
+			}
+
+			m_TreeChopped = true;
 
             
 
-        }
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    private CutableTree GetClosestTree(CutableTree[] trees, GameObject agent)
-    {
-        CutableTree closest = null;
-        float closestDist = float.MaxValue;
+	private CutableTree GetClosestTree ()
+	{
+		var trees = m_Database.RetrieveComponents<CutableTree>();
 
-        foreach (var tree in trees)
-        {
-            float dist = (tree.gameObject.transform.position - agent.transform.position).magnitude;
+		CutableTree closest = null;
+		float closestDist = float.MaxValue;
 
-            if (dist < closestDist)
-            {
-                closest = tree;
-                closestDist = dist;
-            }
-        }
+		foreach (var tree in trees) {
+			float dist = (tree.gameObject.transform.position - transform.position).magnitude;
 
-        return closest;
-    }
+			if (dist < closestDist) {
+				closest = (CutableTree)tree;
+				closestDist = dist;
+			}
+		}
+
+		return closest;
+	}
 }

@@ -13,8 +13,7 @@ public class GoapPlanner
 	 * Returns null if a plan could not be found, or a list of the actions
 	 * that must be performed, in order, to fulfill the goal.
 	 */
-	public Queue<GoapAction> Plan (GameObject agent,
-	                               HashSet<GoapAction> availableActions, 
+	public Queue<GoapAction> Plan (HashSet<GoapAction> availableActions, 
 	                               Dictionary<string,object> worldState, 
 	                               Dictionary<string,object> goal)
 	{
@@ -26,8 +25,9 @@ public class GoapPlanner
 		// check what actions can run using their checkProceduralPrecondition
 		HashSet<GoapAction> usableActions = new HashSet<GoapAction> ();
 		foreach (GoapAction a in availableActions) {
-			if (a.CheckProceduralPrecondition (agent))
+			if (a.CheckProceduralPrecondition ()) {
 				usableActions.Add (a);
+			}
 		}
 
 		// we now have all actions that can run, stored in usableActions

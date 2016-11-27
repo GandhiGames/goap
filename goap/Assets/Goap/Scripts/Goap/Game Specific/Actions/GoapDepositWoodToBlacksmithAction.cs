@@ -5,9 +5,18 @@ public class GoapDepositWoodToBlacksmithAction : GoapAction
 {
 	private bool m_DepositedWood = false;
 	private BlacksmithResourceDeposit m_TargetDeposit;
+	private GetClosestComponent m_GetComponent;
+	private Inventory m_Inventory;
 
-	public GoapDepositWoodToBlacksmithAction()
+	void Awake()
 	{
+		m_Inventory = GetComponent<Inventory> ();
+	}
+
+	void Start()
+	{
+		m_GetComponent = new GetClosestComponent ();
+
 		AddPrecondition ("hasLogs", true); // can't drop off firewood if we don't already have some
 		AddEffect ("hasLogs", false); // we now have no firewood
 		AddEffect ("collectLogs", true); // we collected firewood
@@ -29,52 +38,33 @@ public class GoapDepositWoodToBlacksmithAction : GoapAction
 		return true;
 	}
 
-	public override bool CheckProceduralPrecondition (GameObject agent)
+	public override void SetTarget ()
 	{
-		// find the nearest wood stack that we can collect
-		var stacks = UnityEngine.GameObject.FindObjectsOfType<BlacksmithResourceDeposit>();
+		var closest = m_GetComponent.GetClosest<BlacksmithResourceDeposit> (gameObject);
 
-		if(stacks.Length == 0)
-		{
+		if (closest != null) {
+			m_TargetDeposit = closest;
+			target = m_TargetDeposit.transform;
+		}
+	}
+
+	public override bool CheckProceduralPrecondition ()
+	{
+		var closest = GameObject.FindObjectsOfType<BlacksmithResourceDeposit> ();
+
+		if (closest.Length == 0) {
 			return false;
 		}
-
-		var closest = GetClosestWoodDeposit(stacks, agent);
-		if (closest == null)
-		{
-			return false;
-		}
-
-		m_TargetDeposit = closest;
-		target = m_TargetDeposit.transform;
 
 		return true;
 	}
 
-	private BlacksmithResourceDeposit GetClosestWoodDeposit(BlacksmithResourceDeposit[] stacks, GameObject agent)
+
+
+	public override bool Perform ()
 	{
-		BlacksmithResourceDeposit closest = null;
-		float closestDist = float.MaxValue;
-
-		foreach (var stack in stacks)
-		{
-			float dist = (stack.gameObject.transform.position - agent.transform.position).magnitude;
-
-			if (dist < closestDist)
-			{
-				closest = stack;
-				closestDist = dist;
-			}
-		}
-
-		return closest;
-	}
-
-	public override bool Perform (GameObject agent)
-	{
-		var inventory = agent.GetComponent<Inventory>();
-		m_TargetDeposit.logs += inventory.GetResourceCount(ResourceType.Wood);
-		inventory.SetResourceCount(ResourceType.Wood, 0);
+		m_TargetDeposit.logs += m_Inventory.GetResourceCount (ResourceType.Wood);
+		m_Inventory.SetResourceCount (ResourceType.Wood, 0);
 		m_DepositedWood = true;
 
 		return true;

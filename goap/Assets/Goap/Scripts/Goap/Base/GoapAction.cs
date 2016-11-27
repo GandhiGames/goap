@@ -9,6 +9,8 @@ public abstract class GoapAction : MonoBehaviour
 	 * Changing it will affect what actions are chosen during planning.*/
 	public float cost = 1f;
 
+	public float minDistance = 0.1f;
+
 	/**
 	 * An action often has to perform on an object. This is that object. Can be null. */
 	public Transform target;
@@ -28,8 +30,6 @@ public abstract class GoapAction : MonoBehaviour
 	private Dictionary<string, object> m_Preconditions;
 	private Dictionary<string, object> m_Effects;
 
-	private bool m_InRange = false;
-
 	public GoapAction ()
 	{
 		m_Preconditions = new Dictionary<string, object> ();
@@ -41,7 +41,6 @@ public abstract class GoapAction : MonoBehaviour
 	 */
 	public void Reset ()
 	{
-		m_InRange = false;
 		target = null;
 
         DoReset();
@@ -59,7 +58,7 @@ public abstract class GoapAction : MonoBehaviour
 	 * Procedurally check if this action can run. Not all actions
 	 * will need this, but some might.
 	 */
-	public abstract bool CheckProceduralPrecondition (GameObject agent);
+	public abstract bool CheckProceduralPrecondition ();
 
 	/**
 	 * Run the action.
@@ -67,7 +66,7 @@ public abstract class GoapAction : MonoBehaviour
 	 * if something happened and it can no longer perform. In this case
 	 * the action queue should clear out and the goal cannot be reached.
 	 */
-	public abstract bool Perform (GameObject agent);
+	public abstract bool Perform ();
 
 	/**
 	 * Does this action need to be within range of a target game object?
@@ -82,14 +81,8 @@ public abstract class GoapAction : MonoBehaviour
 	 */
 	public bool IsInRange ()
 	{
-		return m_InRange;
+		return Vector2.Distance (target.position, transform.position) < minDistance;
 	}
-
-	public void SetInRange (bool inRange)
-	{
-		this.m_InRange = inRange;
-	}
-
 
 	public void AddPrecondition (string key, object value)
 	{
@@ -138,6 +131,8 @@ public abstract class GoapAction : MonoBehaviour
 			m_Effects.Remove (remove); 
 		*/
 	}
+
+	public abstract void SetTarget();
 
     protected abstract void DoReset();
 

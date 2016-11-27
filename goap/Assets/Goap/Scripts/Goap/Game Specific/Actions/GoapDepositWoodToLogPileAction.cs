@@ -3,80 +3,70 @@ using System.Collections;
 
 public class GoapDepositWoodToLogPileAction : GoapAction
 {
-    private bool m_DepositedWood = false;
-    private WoodStack m_TargetDeposit;
+	private bool m_DepositedWood = false;
+	private WoodStack m_TargetDeposit;
+	private GetClosestComponent m_GetComponent;
+	private Inventory m_Inventory;
 
-    public GoapDepositWoodToLogPileAction()
-    {
-        AddPrecondition("hasLogs", true); // can't drop off firewood if we don't already have some
-        AddEffect("hasLogs", false); // we now have no firewood
-        AddEffect("collectLogs", true); // we collected firewood
-    }
+	void Awake()
+	{
+		m_Inventory = GetComponent<Inventory> ();
+	}
 
-    protected override void DoReset()
-    {
-        m_DepositedWood = false;
-        m_TargetDeposit = null;
-    }
+	void Start ()
+	{
+		m_GetComponent = new GetClosestComponent ();
 
-    public override bool IsDone()
-    {
-        return m_DepositedWood;
-    }
+		AddPrecondition ("hasLogs", true); // can't drop off firewood if we don't already have some
+		AddEffect ("hasLogs", false); // we now have no firewood
+		AddEffect ("collectLogs", true); // we collected firewood
+	}
 
-    public override bool RequiresInRange()
-    {
-        return true;
-    }
+	protected override void DoReset ()
+	{
+		m_DepositedWood = false;
+		m_TargetDeposit = null;
+	}
 
-    public override bool CheckProceduralPrecondition(GameObject agent)
-    {
-        // find the nearest wood stack that we can collect
-        var stacks = UnityEngine.GameObject.FindObjectsOfType<WoodStack>();
+	public override bool IsDone ()
+	{
+		return m_DepositedWood;
+	}
 
-        if (stacks.Length == 0)
-        {
-            return false;
-        }
+	public override bool RequiresInRange ()
+	{
+		return true;
+	}
 
-        var closest = GetClosestWoodDeposit(stacks, agent);
-        if (closest == null)
-        {
-            return false;
-        }
+	public override void SetTarget ()
+	{
+		var closest = m_GetComponent.GetClosest<WoodStack> (gameObject);
 
-        m_TargetDeposit = closest;
-        target = m_TargetDeposit.transform;
+		if (closest != null) {
+			m_TargetDeposit = closest;
+			target = m_TargetDeposit.transform;
+		}
+	}
 
-        return true;
-    }
+	public override bool CheckProceduralPrecondition ()
+	{
 
-    private WoodStack GetClosestWoodDeposit(WoodStack[] stacks, GameObject agent)
-    {
-        WoodStack closest = null;
-        float closestDist = float.MaxValue;
+		var closest = GameObject.FindObjectsOfType<WoodStack> ();
 
-        foreach (var stack in stacks)
-        {
-            float dist = (stack.gameObject.transform.position - agent.transform.position).magnitude;
+		if (closest.Length == 0) {
+			return false;
+		}
 
-            if (dist < closestDist)
-            {
-                closest = stack;
-                closestDist = dist;
-            }
-        }
+		return true;
+	}
 
-        return closest;
-    }
 
-    public override bool Perform(GameObject agent)
-    {
-        var inventory = agent.GetComponent<Inventory>();
-        m_TargetDeposit.count += inventory.GetResourceCount(ResourceType.Wood);
-        inventory.SetResourceCount(ResourceType.Wood, 0);
-        m_DepositedWood = true;
+	public override bool Perform ()
+	{		
+		m_TargetDeposit.count += m_Inventory.GetResourceCount (ResourceType.Wood);
+		m_Inventory.SetResourceCount (ResourceType.Wood, 0);
+		m_DepositedWood = true;
 
-        return true;
-    }
+		return true;
+	}
 }

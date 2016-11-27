@@ -12,28 +12,27 @@ using UnityEngine;
  */
 public class GoapFSM {
 
-	public delegate void StateDel (GoapFSM fsm, GameObject gameObject);
+	public delegate void StateDel (GoapFSM fsm);
 
 	private Stack<StateDel> m_StateStack = new Stack<StateDel> ();
 
-	public void Update (GameObject gameObject) {
+	public void Update () {
 		if (m_StateStack.Peek () != null) {
-			m_StateStack.Peek ().Invoke (this, gameObject);
+			m_StateStack.Peek ().Invoke (this);
 		}
 	}
 
-	public void pushState(StateDel state) {
+	public void PushState(StateDel state) {
 		m_StateStack.Push (state);
 	}
 
-	public void popState() {
+	public void PopState() {
 		m_StateStack.Pop ();
 	}
 }
 
 public interface GoapFSMState 
 {
-
-	void Update (GoapFSM fsm, GameObject gameObject);
+	void DoUpdate (GoapFSM fsm);
 }
 

@@ -35,16 +35,16 @@ public sealed class GoapAgent : MonoBehaviour
 		CreateIdleState ();
 		CreateMoveToState ();
 		CreatePerformActionState ();
-		m_StateMachine.pushState (m_IdleState);
+		m_StateMachine.PushState (m_IdleState);
 		LoadActions ();
 	}
 
 
 	void Update ()
 	{
-		m_StateMachine.Update (this.gameObject);
+		m_StateMachine.Update ();
 	}
-		
+
 	public void AddAction (GoapAction a)
 	{
 		m_AvailableActions.Add (a);
@@ -71,7 +71,7 @@ public sealed class GoapAgent : MonoBehaviour
 
 	private void CreateIdleState ()
 	{
-		m_IdleState = (fsm, gameObj) => {
+		m_IdleState = (fsm) => {
 			// GOAP planning
 
 			// get the world state and the goal we want to plan for
@@ -79,22 +79,22 @@ public sealed class GoapAgent : MonoBehaviour
 			Dictionary<string,object> goal = m_DataProvider.CreateGoalState ();
 
 			// Plan
-			Queue<GoapAction> plan = planner.Plan (gameObject, m_AvailableActions, worldState, goal);
+			Queue<GoapAction> plan = planner.Plan (m_AvailableActions, worldState, goal);
 
 			if (plan != null) {
 				// we have a plan, hooray!
 				m_CurrentActions = plan;
 				m_DataProvider.PlanFound (goal, plan);
 
-				fsm.popState (); // move to PerformAction state
-				fsm.pushState (m_PerformActionState);
+				fsm.PopState (); // move to PerformAction state
+				fsm.PushState (m_PerformActionState);
 
 			} else {
 				// ugh, we couldn't get a plan
 				Debug.Log ("<color=orange>Failed Plan:</color>" + PrettyPrint (goal));
 				m_DataProvider.PlanFailed (goal);
-				fsm.popState (); // move back to IdleAction state
-				fsm.pushState (m_IdleState);
+				fsm.PopState (); // move back to IdleAction state
+				fsm.PushState (m_IdleState);
 			}
 
 		};
@@ -102,21 +102,21 @@ public sealed class GoapAgent : MonoBehaviour
 
 	private void CreateMoveToState ()
 	{
-		m_MoveToState = (fsm, gameObj) => {
+		m_MoveToState = (fsm) => {
 			// move the game object
 
 			GoapAction action = m_CurrentActions.Peek ();
 			if (action.RequiresInRange () && action.target == null) {
-				Debug.Log ("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
-				fsm.popState (); // move
-				fsm.popState (); // perform
-				fsm.pushState (m_IdleState);
+				Debug.Log ("Target not found yet, moving to idle state");
+				fsm.PopState (); // move
+				fsm.PopState (); // perform
+				fsm.PushState (m_IdleState);
 				return;
 			}
 
 			// get the agent to move itself
 			if (m_DataProvider.MoveAgent (action)) {
-				fsm.popState ();
+				fsm.PopState ();
 			}
 		};
 	}
@@ -124,14 +124,14 @@ public sealed class GoapAgent : MonoBehaviour
 	private void CreatePerformActionState ()
 	{
 
-		m_PerformActionState = (fsm, gameObj) => {
+		m_PerformActionState = (fsm) => {
 			// perform the action
 
 			if (!HasActionPlan ()) {
 				// no actions to perform
 				Debug.Log ("<color=red>Done actions</color>");
-				fsm.popState ();
-				fsm.pushState (m_IdleState);
+				fsm.PopState ();
+				fsm.PushState (m_IdleState);
 				m_DataProvider.ActionsFinished ();
 				return;
 			}
@@ -145,28 +145,37 @@ public sealed class GoapAgent : MonoBehaviour
 			if (HasActionPlan ()) {
 				// perform the next action
 				action = m_CurrentActions.Peek ();
-				bool inRange = action.RequiresInRange () ? action.IsInRange () : true;
+
+				if (action.target == null) {
+					action.SetTarget ();
+				}
+
+				bool inRange = false;
+
+				if (action.target != null) {
+					inRange = action.RequiresInRange () ? action.IsInRange () : true;
+				}
 
 				if (inRange) {
 					// we are in range, so perform the action
-					bool success = action.Perform (gameObj);
+					bool success = action.Perform ();
 
 					if (!success) {
 						// action failed, we need to plan again
-						fsm.popState ();
-						fsm.pushState (m_IdleState);
+						fsm.PopState ();
+						fsm.PushState (m_IdleState);
 						m_DataProvider.PlanAborted (action);
 					}
 				} else {
 					// we need to move there first
 					// push moveTo state
-					fsm.pushState (m_MoveToState);
+					fsm.PushState (m_MoveToState);
 				}
 
 			} else {
 				// no actions left, move to Plan state
-				fsm.popState ();
-				fsm.pushState (m_IdleState);
+				fsm.PopState ();
+				fsm.PushState (m_IdleState);
 				m_DataProvider.ActionsFinished ();
 			}
 

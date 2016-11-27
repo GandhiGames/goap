@@ -6,6 +6,12 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
     public bool startWithAxe = true;
     private bool m_HasAxe = false;
     private ToolDispenser m_ToolDispenser; // where we get the tool from
+	private Inventory m_Inventory;
+
+	void Awake()
+	{
+		m_Inventory = GetComponent<Inventory> ();
+	}
 
     void Start()
     {
@@ -13,12 +19,9 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
         {
             GetComponent<Inventory>().equippedTool = new WoodenAxe();
         }
-    }
 
-    public GoapCollectAxeFromBlacksmithAction()
-    {
-        AddPrecondition("hasAxe", false); // don't get a tool if we already have one
-        AddEffect("hasAxe", true); // we now have a tool
+		AddPrecondition("hasAxe", false); // don't get a tool if we already have one
+		AddEffect("hasAxe", true); // we now have a tool
     }
 
     protected override void DoReset()
@@ -37,7 +40,19 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
         return true; 
     }
 
-    public override bool CheckProceduralPrecondition(GameObject agent)
+	public override void SetTarget ()
+	{
+		var dispensers = GameObject.FindObjectsOfType<ToolDispenser>();
+		var closest = GetClosestToolDispenser(dispensers, gameObject);
+		if (closest != null)
+		{
+			m_ToolDispenser = closest;
+			target = m_ToolDispenser.transform;
+		}
+
+	}
+
+    public override bool CheckProceduralPrecondition()
     {
         var dispensers = GameObject.FindObjectsOfType<ToolDispenser>();
 
@@ -46,25 +61,16 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
             return false;
         }
 
-        var closest = GetClosestToolDispenser(dispensers, agent);
-        if (closest == null)
-        {
-            return false;
-        }
-
-        m_ToolDispenser = closest;
-        target = m_ToolDispenser.transform;
-
         return true;
     }
 
-    public override bool Perform(GameObject agent)
+    public override bool Perform()
     {
         var axe = m_ToolDispenser.RetrieveWoodenAxe();
 
         if (axe != null)
         {
-            agent.GetComponent<Inventory>().equippedTool = axe;
+			m_Inventory.equippedTool = axe;
 
             m_HasAxe = true;
 

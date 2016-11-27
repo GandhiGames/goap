@@ -3,104 +3,104 @@ using System.Collections;
 
 public class GoapForgeWoodenAxeAction : GoapAction
 {
-    public float forgeDurationSecs = 10f;
+	public float forgeDurationSecs = 10f;
 
-    private bool m_Forged = false;
-    private BlacksmithForge m_TargetForge; 
-    private float m_StartTime = 0;
-    private GoapLabourerAnimator m_Animator;
+	private bool m_Forged = false;
+	private BlacksmithForge m_TargetForge;
+	private float m_StartTime = 0;
+	private GoapLabourerAnimator m_Animator;
+	private Inventory m_Inventory;
+	private ToolDispenser m_ToolDispenser;
 
-    void Awake()
-    {
-        m_Animator = GetComponent<GoapLabourerAnimator>();
-    }
+	void Awake ()
+	{
+		m_Animator = GetComponent<GoapLabourerAnimator> ();
+		m_Inventory = GetComponent<Inventory> ();
+		m_ToolDispenser = GetComponent<ToolDispenser> ();
+	}
 
-    public GoapForgeWoodenAxeAction()
-    {
-        AddPrecondition("hasLogs", true);
-        AddEffect("hasNewWoodenAxe", true);
-    }
+	void Start ()
+	{
+		AddPrecondition ("hasLogs", true);
+		AddEffect ("hasNewWoodenAxe", true);
+	}
 
-    protected override void DoReset()
-    {
-        m_Forged = false;
-        m_TargetForge = null;
-        m_StartTime = 0;
-    }
+	protected override void DoReset ()
+	{
+		m_Forged = false;
+		m_TargetForge = null;
+		m_StartTime = 0;
+	}
 
-    public override bool IsDone()
-    {
-        return m_Forged;
-    }
+	public override bool IsDone ()
+	{
+		return m_Forged;
+	}
 
-    public override bool RequiresInRange()
-    {
-        return true;
-    }
+	public override bool RequiresInRange ()
+	{
+		return true;
+	}
 
-    public override bool Perform(GameObject agent)
-    {
-        if (m_StartTime == 0)
-        {
-            m_StartTime = Time.time;
-            m_Animator.PlaySlash();
-        }
+	public override bool Perform ()
+	{
+		if (m_StartTime == 0) {
+			m_StartTime = Time.time;
+			m_Animator.PlaySlash ();
+		}
 
 
-        if (Time.time - m_StartTime > forgeDurationSecs)
-        {
-            m_Animator.StopSlash();
+		if (Time.time - m_StartTime > forgeDurationSecs) {
+			m_Animator.StopSlash ();
 
-            var inventory = agent.GetComponent<Inventory>();
+			m_Inventory.SetResourceCount (ResourceType.Wood, 0);
 
-            inventory.SetResourceCount(ResourceType.Wood, 0);
+			m_ToolDispenser.IncrementToolCount (ToolType.WoodenAxe, 1);
 
-            var dispenser = agent.GetComponent<ToolDispenser>();
+			m_Forged = true;
+		}
 
-            dispenser.IncrementToolCount(ToolType.WoodenAxe, 1);
+		return true;
+	}
 
-            m_Forged = true;
-        }
+	public override void SetTarget ()
+	{
+		var trees = UnityEngine.GameObject.FindObjectsOfType<BlacksmithForge> ();
 
-        return true;
-    }
-    public override bool CheckProceduralPrecondition(GameObject agent)
-    {
-        var trees = UnityEngine.GameObject.FindObjectsOfType<BlacksmithForge>();
+		var closest = GetClosestForge (trees, gameObject);
+		if (closest != null) {
+			m_TargetForge = closest;
+			target = m_TargetForge.transform;
+		}
 
-        if (trees.Length == 0)
-        {
-            return false;
-        }
 
-        var closest = GetClosestForge(trees, agent);
-        if (closest == null)
-        {
-            return false;
-        }
+	}
 
-        m_TargetForge = closest;
-        target = m_TargetForge.transform;
+	public override bool CheckProceduralPrecondition ()
+	{
+		var trees = UnityEngine.GameObject.FindObjectsOfType<BlacksmithForge> ();
 
-        return true;
-    }
+		if (trees.Length == 0) {
+			return false;
+		}
 
-    private BlacksmithForge GetClosestForge(BlacksmithForge[] trees, GameObject agent)
-    {
-        BlacksmithForge closest = null;
-        float closestDist = float.MaxValue;
+		return true;
+	}
 
-        foreach (var tree in trees)
-        {
-            float dist = (tree.gameObject.transform.position - agent.transform.position).magnitude;
+	private BlacksmithForge GetClosestForge (BlacksmithForge[] trees, GameObject agent)
+	{
+		BlacksmithForge closest = null;
+		float closestDist = float.MaxValue;
 
-            if (dist < closestDist)
-            {
-                closest = tree;
-                closestDist = dist;
-            }
-        }
+		foreach (var tree in trees) {
+			float dist = (tree.gameObject.transform.position - agent.transform.position).magnitude;
 
-        return closest;
-    }
+			if (dist < closestDist) {
+				closest = tree;
+				closestDist = dist;
+			}
+		}
+
+		return closest;
+	}
 }
