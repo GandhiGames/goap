@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: d32344467d3492c44b2d506d1880f751
-timeCreated: 1480065669
+timeCreated: 1480252095
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -144,7 +144,7 @@ TextureImporter:
     21300274: farming_fishing_137
     21300276: farming_fishing_138
     21300278: farming_fishing_139
-    21300280: farming_fishing_140
+    21300280: meat
     21300282: farming_fishing_141
     21300284: farming_fishing_142
     21300286: farming_fishing_143
@@ -2146,7 +2146,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_140
+      name: meat
       rect:
         serializedVersion: 2
         x: 32
