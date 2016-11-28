@@ -5,7 +5,6 @@ public class GoapDepositWoodToLogPileAction : GoapAction
 {
 	private bool m_DepositedWood = false;
 	private WoodStack m_TargetDeposit;
-	private GetClosestComponent m_GetComponent;
 	private Inventory m_Inventory;
 
 	void Awake()
@@ -13,9 +12,9 @@ public class GoapDepositWoodToLogPileAction : GoapAction
 		m_Inventory = GetComponent<Inventory> ();
 	}
 
-	void Start ()
-	{
-		m_GetComponent = new GetClosestComponent ();
+    protected override void Start()
+    {
+        base.Start();
 
 		AddPrecondition ("hasLogs", true); // can't drop off firewood if we don't already have some
 		AddEffect ("hasLogs", false); // we now have no firewood
@@ -40,7 +39,7 @@ public class GoapDepositWoodToLogPileAction : GoapAction
 
 	public override void SetTarget ()
 	{
-		var closest = m_GetComponent.GetClosest<WoodStack> (gameObject);
+        var closest = GetClosest();
 
 		if (closest != null) {
 			m_TargetDeposit = closest;
@@ -50,14 +49,7 @@ public class GoapDepositWoodToLogPileAction : GoapAction
 
 	public override bool CheckProceduralPrecondition ()
 	{
-
-		var closest = GameObject.FindObjectsOfType<WoodStack> ();
-
-		if (closest.Length == 0) {
-			return false;
-		}
-
-		return true;
+        return COMPONENT_DATABASE.RetrieveComponents<WoodStack>().Count > 0;
 	}
 
 
@@ -69,4 +61,25 @@ public class GoapDepositWoodToLogPileAction : GoapAction
 
 		return true;
 	}
+
+    private WoodStack GetClosest()
+    {
+        var trees = COMPONENT_DATABASE.RetrieveComponents<WoodStack>();
+
+        WoodStack closest = null;
+        float closestDist = float.MaxValue;
+
+        foreach (var tree in trees)
+        {
+            float dist = (tree.gameObject.transform.position - transform.position).magnitude;
+
+            if (dist < closestDist)
+            {
+                closest = (WoodStack)tree;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
 }

@@ -7,6 +7,8 @@ public interface GoapLabourerAnimator
     void PlayStandUp();
     void PlaySlash();
     void StopSlash();
+    void PlayThrust();
+    void StopThrust();
 }
 
 [RequireComponent(typeof(GoapMovement), typeof(Animator))]
@@ -18,6 +20,7 @@ public class GoapLabourerAnimatorImpl : MonoBehaviour, GoapLabourerAnimator
     private static readonly int PICKUP_HASH = Animator.StringToHash("PickUp");
     private static readonly int STANDUP_HASH = Animator.StringToHash("StandUp");
     private static readonly int SLASHING_HASH = Animator.StringToHash("Slashing");
+    private static readonly int THRUSTING_HASH = Animator.StringToHash("Thrusting");
 
     private GoapMovement m_Movement;
     private Animator m_Animator;
@@ -56,6 +59,16 @@ public class GoapLabourerAnimatorImpl : MonoBehaviour, GoapLabourerAnimator
     public void StopSlash()
     {
         m_Animator.SetBool(SLASHING_HASH, false);
+    }
+
+    public void PlayThrust()
+    {
+        m_Animator.SetBool(THRUSTING_HASH, true);
+    }
+
+    public void StopThrust()
+    {
+        m_Animator.SetBool(THRUSTING_HASH, false);
     }
 
     private void EnableMovement()

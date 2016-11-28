@@ -7,8 +7,7 @@ public class AnimalFarmer : GoapLabourer
 	{
 		var goal = new Dictionary<string, object>();
 
-		goal.Add("spawnMeat", true);
-		goal.Add ("hasMeat", true);
+		goal.Add("collectMeat", true);
 
 		return goal;
 	}

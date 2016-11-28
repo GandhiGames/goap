@@ -19,10 +19,10 @@ public abstract class GoapLabourer : MonoBehaviour, Goap
     {
         var worldData = new Dictionary<string, object>();
 
-		worldData.Add("hasLogs", (m_Inventory.HasResource(ResourceType.Wood)));
-        worldData.Add("hasAxe", (m_Inventory.HasToolEquipped(ToolType.WoodenAxe)));
-		worldData.Add("hasMeat", (m_Inventory.HasResource(ResourceType.Meat)));
-		worldData.Add ("spawnMeat", false);
+		worldData.Add("hasLogs", m_Inventory.HasResource(ResourceType.Wood));
+        worldData.Add("hasAxe", m_Inventory.HasToolEquipped(ToolType.WoodenAxe));
+		worldData.Add("hasMeat", m_Inventory.HasResource(ResourceType.Meat));
+        worldData.Add("hasCookedMeat", m_Inventory.HasResource(ResourceType.CookedMeat));
 
         return worldData;
     }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AnimalHealth : MonoBehaviour 
+public class AnimalHealth : WorldComponent 
 {
 	public GameObject meatPrefab;
 
@@ -18,8 +18,18 @@ public class AnimalHealth : MonoBehaviour
 	{
 		return m_Dying;
 	}
-		
-	private IEnumerator DoKill(float seconds)
+
+    void OnEnable()
+    {
+        COMPONENT_DATABASE.Register<AnimalHealth>(this);
+    }
+
+    void OnDisable()
+    {
+        COMPONENT_DATABASE.UnRegister<AnimalHealth>(this);
+    }
+
+    private IEnumerator DoKill(float seconds)
 	{
 		yield return new WaitForSeconds (seconds);
 

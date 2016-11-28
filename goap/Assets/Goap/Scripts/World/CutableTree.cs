@@ -3,19 +3,13 @@ using System.Collections;
 
 public class CutableTree : WorldComponent
 {
-	
-	void Awake()
-	{
-		
-	}
+    void OnEnable()
+    {
+        COMPONENT_DATABASE.Register<CutableTree>(this);
+    }
 
-	void OnEnable()
-	{
-		register
-	}
-
-	void OnDisable()
-	{
-		unregister
-	}
+    void OnDisable()
+    {
+        COMPONENT_DATABASE.UnRegister<CutableTree>(this);
+    }
 }

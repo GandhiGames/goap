@@ -86,6 +86,7 @@ public sealed class GoapAgent : MonoBehaviour
 				m_CurrentActions = plan;
 				m_DataProvider.PlanFound (goal, plan);
 
+                
 				fsm.PopState (); // move to PerformAction state
 				fsm.PushState (m_PerformActionState);
 
@@ -146,9 +147,9 @@ public sealed class GoapAgent : MonoBehaviour
 				// perform the next action
 				action = m_CurrentActions.Peek ();
 
-				if (action.target == null) {
-					action.SetTarget ();
-				}
+                if (action.target == null) {
+                    action.SetTarget ();
+                }
 
 				bool inRange = false;
 

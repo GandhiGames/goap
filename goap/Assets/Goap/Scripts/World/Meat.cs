@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Meat : MonoBehaviour {
+public class Meat : WorldComponent
+{
+    void OnEnable()
+    {
+        COMPONENT_DATABASE.Register<Meat>(this);
+    }
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    void OnDisable()
+    {
+        COMPONENT_DATABASE.UnRegister<Meat>(this);
+    }
 }

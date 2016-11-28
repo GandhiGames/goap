@@ -5,7 +5,6 @@ using System;
 public class GoapCollectWoodFromLogPileAction : GoapAction
 {
 	public float workDurationSecs = 2f;
-	// seconds
 	public int maxWoodToCollect = 2;
 
 	private bool m_Collected = false;
@@ -20,9 +19,11 @@ public class GoapCollectWoodFromLogPileAction : GoapAction
 		m_Inventory = GetComponent<Inventory> ();
 	}
 
-	void Start ()
-	{
-		AddPrecondition ("hasLogs", false); // if we have logs we don't want more
+    protected override void Start()
+    {
+        base.Start();
+
+        AddPrecondition ("hasLogs", false); // if we have logs we don't want more
 		AddEffect ("hasLogs", true);
 	}
 
@@ -44,8 +45,7 @@ public class GoapCollectWoodFromLogPileAction : GoapAction
 
 	public override void SetTarget ()
 	{
-		var stacks = UnityEngine.GameObject.FindObjectsOfType<WoodStack> ();
-		var closest = GetClosestWoodStack (stacks, gameObject);
+        var closest = GetClosest();
 		if (closest != null) {
 			m_TargetStack = closest;
 			target = m_TargetStack.transform;
@@ -54,14 +54,7 @@ public class GoapCollectWoodFromLogPileAction : GoapAction
 
 	public override bool CheckProceduralPrecondition ()
 	{
-		// find the nearest wood stack that we can collect
-		var stacks = UnityEngine.GameObject.FindObjectsOfType<WoodStack> ();
-
-		if (stacks.Length == 0) {
-			return false;
-		}
-
-		return true;
+        return COMPONENT_DATABASE.RetrieveComponents<WoodStack>().Count > 0;
 	}
 
 	public override bool Perform ()
@@ -89,24 +82,29 @@ public class GoapCollectWoodFromLogPileAction : GoapAction
 	}
 
 
-	private WoodStack GetClosestWoodStack (WoodStack[] stacks, GameObject agent)
-	{
-		WoodStack closest = null;
-		float closestDist = float.MaxValue;
+    private WoodStack GetClosest()
+    {
+        var stacks = COMPONENT_DATABASE.RetrieveComponents<WoodStack>();
 
-		foreach (var stack in stacks) {
-			if (stack.count <= 0) {
-				continue;
-			}
+        if (stacks.Count == 0)
+        {
+            return null;
+        }
 
-			float dist = (stack.gameObject.transform.position - agent.transform.position).magnitude;
+        WoodStack closest = null;
+        float closestDist = float.MaxValue;
 
-			if (dist < closestDist) {
-				closest = stack;
-				closestDist = dist;
-			}
-		}
+        foreach (var stack in stacks)
+        {
+            float dist = (stack.gameObject.transform.position - transform.position).magnitude;
 
-		return closest;
-	}
+            if (dist < closestDist)
+            {
+                closest = (WoodStack)stack;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
 }

@@ -16,17 +16,20 @@ public class GoapFSM {
 
 	private Stack<StateDel> m_StateStack = new Stack<StateDel> ();
 
-	public void Update () {
+	public void Update ()
+    {
 		if (m_StateStack.Peek () != null) {
 			m_StateStack.Peek ().Invoke (this);
 		}
 	}
 
-	public void PushState(StateDel state) {
+	public void PushState(StateDel state)
+    {
 		m_StateStack.Push (state);
 	}
 
-	public void PopState() {
+	public void PopState()
+    {
 		m_StateStack.Pop ();
 	}
 }

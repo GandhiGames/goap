@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class GoapCollectAxeFromBlacksmithAction : GoapAction
 {
@@ -13,11 +13,13 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
 		m_Inventory = GetComponent<Inventory> ();
 	}
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         if (startWithAxe)
         {
-            GetComponent<Inventory>().equippedTool = new WoodenAxe();
+            m_Inventory.equippedTool = new WoodenAxe();
         }
 
 		AddPrecondition("hasAxe", false); // don't get a tool if we already have one
@@ -42,8 +44,8 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
 
 	public override void SetTarget ()
 	{
-		var dispensers = GameObject.FindObjectsOfType<ToolDispenser>();
-		var closest = GetClosestToolDispenser(dispensers, gameObject);
+		var closest = GetClosest();
+
 		if (closest != null)
 		{
 			m_ToolDispenser = closest;
@@ -54,14 +56,7 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
 
     public override bool CheckProceduralPrecondition()
     {
-        var dispensers = GameObject.FindObjectsOfType<ToolDispenser>();
-
-        if (dispensers.Length == 0)
-        {
-            return false;
-        }
-
-        return true;
+        return COMPONENT_DATABASE.RetrieveComponents<ToolDispenser>().Count > 0;
     }
 
     public override bool Perform()
@@ -83,19 +78,27 @@ public class GoapCollectAxeFromBlacksmithAction : GoapAction
         }
     }
 
-    private ToolDispenser GetClosestToolDispenser(ToolDispenser[] dispensers, GameObject agent)
+    private ToolDispenser GetClosest()
     {
+        var dispensers = COMPONENT_DATABASE.RetrieveComponents<ToolDispenser>();
+
+        if(dispensers.Count == 0)
+        {
+            return null;
+        }
+
         ToolDispenser closest = null;
         float closestDist = float.MaxValue;
 
-        foreach (var dispenser in dispensers)
+        foreach (var d in dispensers)
         {
+            var dispenser = (ToolDispenser)d;
             if(dispenser.GetResourceCount(ToolType.WoodenAxe) <= 0)
             {
                 continue;
             }
 
-            float dist = (dispenser.gameObject.transform.position - agent.transform.position).magnitude;
+            float dist = (dispenser.gameObject.transform.position - transform.position).magnitude;
 
             if (dist < closestDist)
             {

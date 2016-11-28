@@ -27,14 +27,21 @@ public abstract class GoapAction : MonoBehaviour
 		}
 	}
 
+    protected static GoapWorldComponentDatabase COMPONENT_DATABASE;
+
 	private Dictionary<string, object> m_Preconditions;
 	private Dictionary<string, object> m_Effects;
 
-	public GoapAction ()
-	{
-		m_Preconditions = new Dictionary<string, object> ();
-		m_Effects = new Dictionary<string, object> ();
-	}
+    protected virtual void Start()
+    {
+        m_Preconditions = new Dictionary<string, object>();
+        m_Effects = new Dictionary<string, object>();
+
+        if(COMPONENT_DATABASE == null)
+        {
+            COMPONENT_DATABASE = FindObjectOfType<GoapWorldComponentDatabase>();
+        }
+    }
 
 	/**
 	 * Reset any variables that need to be reset before planning happens again.
@@ -73,7 +80,6 @@ public abstract class GoapAction : MonoBehaviour
 	 * If not then the moveTo state will not need to run for this action.
 	 */
 	public abstract bool RequiresInRange ();
-
 
 	/**
 	 * Are we in range of the target?

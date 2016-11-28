@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: d32344467d3492c44b2d506d1880f751
-timeCreated: 1480252095
+timeCreated: 1480328206
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -80,10 +80,10 @@ TextureImporter:
     21300146: farming_fishing_73
     21300148: farming_fishing_74
     21300150: farming_fishing_75
-    21300152: farming_fishing_76
-    21300154: farming_fishing_77
-    21300156: farming_fishing_78
-    21300158: farming_fishing_79
+    21300152: meat_table_1_top
+    21300154: meat_table_2_top
+    21300156: meat_table_3_top
+    21300158: meat_table_4_top
     21300160: farming_fishing_80
     21300162: farming_fishing_81
     21300164: farming_fishing_82
@@ -97,10 +97,10 @@ TextureImporter:
     21300180: farming_fishing_90
     21300182: farming_fishing_91
     21300184: farming_fishing_92
-    21300186: farming_fishing_93
-    21300188: farming_fishing_94
-    21300190: farming_fishing_95
-    21300192: farming_fishing_96
+    21300186: meat_table_1_bottom
+    21300188: meat_table_2_bottom
+    21300190: meat_table_3_bottom
+    21300192: meat_table_3_top_bottom
     21300194: farming_fishing_97
     21300196: farming_fishing_98
     21300198: farming_fishing_99
@@ -127,8 +127,8 @@ TextureImporter:
     21300240: farming_fishing_120
     21300242: farming_fishing_121
     21300244: farming_fishing_122
-    21300246: farming_fishing_123
-    21300248: farming_fishing_124
+    21300246: meat_1
+    21300248: meat_2
     21300250: farming_fishing_125
     21300252: farming_fishing_126
     21300254: farming_fishing_127
@@ -145,8 +145,8 @@ TextureImporter:
     21300276: farming_fishing_138
     21300278: farming_fishing_139
     21300280: meat
-    21300282: farming_fishing_141
-    21300284: farming_fishing_142
+    21300282: meat_3
+    21300284: meat_4
     21300286: farming_fishing_143
     21300288: farming_fishing_144
     21300290: farming_fishing_145
@@ -277,6 +277,7 @@ TextureImporter:
     21300540: farming_fishing_270
     21300542: farming_fishing_271
     21300544: farming_fishing_272
+    21300546: meat_table_4_bottom
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -1314,7 +1315,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_76
+      name: meat_table_1_top
       rect:
         serializedVersion: 2
         x: 256
@@ -1327,7 +1328,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_77
+      name: meat_table_2_top
       rect:
         serializedVersion: 2
         x: 288
@@ -1340,7 +1341,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_78
+      name: meat_table_3_top
       rect:
         serializedVersion: 2
         x: 320
@@ -1353,11 +1354,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_79
+      name: meat_table_4_top
       rect:
         serializedVersion: 2
         x: 352
-        y: 448
+        y: 449
         width: 32
         height: 32
       alignment: 0
@@ -1535,7 +1536,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_93
+      name: meat_table_1_bottom
       rect:
         serializedVersion: 2
         x: 256
@@ -1548,7 +1549,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_94
+      name: meat_table_2_bottom
       rect:
         serializedVersion: 2
         x: 288
@@ -1561,7 +1562,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_95
+      name: meat_table_3_bottom
       rect:
         serializedVersion: 2
         x: 320
@@ -1574,7 +1575,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_96
+      name: meat_table_4_bottom
       rect:
         serializedVersion: 2
         x: 352
@@ -1925,7 +1926,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_123
+      name: meat_1
       rect:
         serializedVersion: 2
         x: 96
@@ -1938,7 +1939,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_124
+      name: meat_2
       rect:
         serializedVersion: 2
         x: 128
@@ -2159,7 +2160,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_141
+      name: meat_3
       rect:
         serializedVersion: 2
         x: 96
@@ -2172,7 +2173,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: farming_fishing_142
+      name: meat_4
       rect:
         serializedVersion: 2
         x: 128

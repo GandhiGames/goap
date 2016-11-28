@@ -5,7 +5,6 @@ public class GoapDepositWoodToBlacksmithAction : GoapAction
 {
 	private bool m_DepositedWood = false;
 	private BlacksmithResourceDeposit m_TargetDeposit;
-	private GetClosestComponent m_GetComponent;
 	private Inventory m_Inventory;
 
 	void Awake()
@@ -13,9 +12,9 @@ public class GoapDepositWoodToBlacksmithAction : GoapAction
 		m_Inventory = GetComponent<Inventory> ();
 	}
 
-	void Start()
-	{
-		m_GetComponent = new GetClosestComponent ();
+    protected override void Start()
+    {
+        base.Start();
 
 		AddPrecondition ("hasLogs", true); // can't drop off firewood if we don't already have some
 		AddEffect ("hasLogs", false); // we now have no firewood
@@ -40,7 +39,7 @@ public class GoapDepositWoodToBlacksmithAction : GoapAction
 
 	public override void SetTarget ()
 	{
-		var closest = m_GetComponent.GetClosest<BlacksmithResourceDeposit> (gameObject);
+        BlacksmithResourceDeposit closest = GetClosest();
 
 		if (closest != null) {
 			m_TargetDeposit = closest;
@@ -50,13 +49,7 @@ public class GoapDepositWoodToBlacksmithAction : GoapAction
 
 	public override bool CheckProceduralPrecondition ()
 	{
-		var closest = GameObject.FindObjectsOfType<BlacksmithResourceDeposit> ();
-
-		if (closest.Length == 0) {
-			return false;
-		}
-
-		return true;
+        return COMPONENT_DATABASE.RetrieveComponents<BlacksmithResourceDeposit>().Count > 0;
 	}
 
 
@@ -69,4 +62,25 @@ public class GoapDepositWoodToBlacksmithAction : GoapAction
 
 		return true;
 	}
+
+    private BlacksmithResourceDeposit GetClosest()
+    {
+        var trees = COMPONENT_DATABASE.RetrieveComponents<BlacksmithResourceDeposit>();
+
+        BlacksmithResourceDeposit closest = null;
+        float closestDist = float.MaxValue;
+
+        foreach (var tree in trees)
+        {
+            float dist = (tree.gameObject.transform.position - transform.position).magnitude;
+
+            if (dist < closestDist)
+            {
+                closest = (BlacksmithResourceDeposit)tree;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
 }

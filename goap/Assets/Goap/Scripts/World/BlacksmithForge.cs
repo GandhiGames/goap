@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BlacksmithForge : MonoBehaviour {
+public class BlacksmithForge : WorldComponent
+{
+    void OnEnable()
+    {
+        COMPONENT_DATABASE.Register<BlacksmithForge>(this);
+    }
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    void OnDisable()
+    {
+        COMPONENT_DATABASE.UnRegister<BlacksmithForge>(this);
+    }
 }

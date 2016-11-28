@@ -38,13 +38,23 @@ public enum ToolType
 }
 
 [RequireComponent(typeof(Inventory))]
-public class ToolDispenser : MonoBehaviour
+public class ToolDispenser : WorldComponent
 {
     private Dictionary<ToolType, Resource> m_Tools;
 
     void Start()
     {
         m_Tools = new Dictionary<ToolType, Resource>();
+    }
+
+    void OnEnable()
+    {
+        COMPONENT_DATABASE.Register<ToolDispenser>(this);
+    }
+
+    void OnDisable()
+    {
+        COMPONENT_DATABASE.UnRegister<ToolDispenser>(this);
     }
 
     public void IncrementToolCount(ToolType toolType, int count)

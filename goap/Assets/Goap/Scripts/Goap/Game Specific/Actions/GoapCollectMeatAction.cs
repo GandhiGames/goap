@@ -5,7 +5,6 @@ public class GoapCollectMeatAction : GoapAction
 {
 	private bool m_HasMeat;
 	private Meat m_TargetMeat;
-	private GetClosestComponent m_GetComponent;
 	private Inventory m_Inventory;
 
 	void Awake ()
@@ -13,9 +12,9 @@ public class GoapCollectMeatAction : GoapAction
 		m_Inventory = GetComponent<Inventory> ();
 	}
 
-	void Start ()
-	{
-		m_GetComponent = new GetClosestComponent ();
+    protected override void Start()
+    {
+        base.Start();
 
 		AddPrecondition ("hasMeat", false); 
 		AddPrecondition ("spawnMeat", true);
@@ -40,7 +39,7 @@ public class GoapCollectMeatAction : GoapAction
 
 	public override void SetTarget ()
 	{
-		var closestMeat = m_GetComponent.GetClosest<Meat> (gameObject);
+        var closestMeat = GetClosest();
 
 		if (closestMeat != null) {
 			m_TargetMeat = closestMeat;
@@ -67,8 +66,6 @@ public class GoapCollectMeatAction : GoapAction
 
 	public override bool Perform ()
 	{
-		
-
 		if (m_TargetMeat != null) {
 			Destroy (m_TargetMeat.gameObject);
 
@@ -81,4 +78,25 @@ public class GoapCollectMeatAction : GoapAction
 
 		return false;
 	}
+
+    private Meat GetClosest()
+    {
+        var meat = COMPONENT_DATABASE.RetrieveComponents<Meat>();
+
+        Meat closest = null;
+        float closestDist = float.MaxValue;
+
+        foreach (var tree in meat)
+        {
+            float dist = (tree.gameObject.transform.position - transform.position).magnitude;
+
+            if (dist < closestDist)
+            {
+                closest = (Meat)tree;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
 }

@@ -6,7 +6,8 @@ public enum ResourceType
 {
 	Wood,
 	Iron,
-	Meat
+	Meat,
+    CookedMeat
 }
 
 public class Resource

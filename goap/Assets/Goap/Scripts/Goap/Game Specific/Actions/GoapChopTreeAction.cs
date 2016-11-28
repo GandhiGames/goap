@@ -11,18 +11,18 @@ public class GoapChopTreeAction : GoapAction
 	private float m_StartTime;
 	private GoapLabourerAnimator m_Animator;
 	private Inventory m_Inventory;
-	private WorldComponentDatabase m_Database;
 
 	void Awake ()
 	{
 		m_Animator = GetComponent<GoapLabourerAnimator> ();
 		m_Inventory = GetComponent<Inventory> ();
-		m_Database = FindObjectOfType<WorldComponentDatabase> ();
 	}
 
-	void Start ()
-	{
-		AddPrecondition ("hasAxe", true); // we need a tool to do this
+    protected override void Start()
+    {
+        base.Start();
+
+        AddPrecondition ("hasAxe", true); // we need a tool to do this
 		AddPrecondition ("hasLogs", false); // if we have firewood we don't want more
 		AddEffect ("hasLogs", true);
 	}
@@ -47,7 +47,7 @@ public class GoapChopTreeAction : GoapAction
 
 	public override void SetTarget ()
 	{
-		var closest = GetClosestTree ();
+		var closest = GetClosest ();
 
 		if (closest != null) {
 			m_TargetTree = closest;
@@ -57,7 +57,7 @@ public class GoapChopTreeAction : GoapAction
 
 	public override bool CheckProceduralPrecondition ()
 	{
-		return m_Database.RetrieveComponents<CutableTree>().Count > 0;
+		return COMPONENT_DATABASE.RetrieveComponents<CutableTree>().Count > 0;
 	}
 
 	public override bool Perform ()
@@ -80,17 +80,19 @@ public class GoapChopTreeAction : GoapAction
 			}
 
 			m_TreeChopped = true;
-
-            
-
 		}
 
 		return true;
 	}
 
-	private CutableTree GetClosestTree ()
+	private CutableTree GetClosest ()
 	{
-		var trees = m_Database.RetrieveComponents<CutableTree>();
+		var trees = COMPONENT_DATABASE.RetrieveComponents<CutableTree>();
+
+        if(trees.Count == 0)
+        {
+            return null;
+        }
 
 		CutableTree closest = null;
 		float closestDist = float.MaxValue;

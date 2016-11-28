@@ -19,9 +19,11 @@ public class GoapForgeWoodenAxeAction : GoapAction
 		m_ToolDispenser = GetComponent<ToolDispenser> ();
 	}
 
-	void Start ()
-	{
-		AddPrecondition ("hasLogs", true);
+    protected override void Start()
+    {
+        base.Start();
+
+        AddPrecondition ("hasLogs", true);
 		AddEffect ("hasNewWoodenAxe", true);
 	}
 
@@ -65,42 +67,42 @@ public class GoapForgeWoodenAxeAction : GoapAction
 
 	public override void SetTarget ()
 	{
-		var trees = UnityEngine.GameObject.FindObjectsOfType<BlacksmithForge> ();
+		var closest = GetClosest ();
 
-		var closest = GetClosestForge (trees, gameObject);
 		if (closest != null) {
 			m_TargetForge = closest;
 			target = m_TargetForge.transform;
 		}
-
-
 	}
 
 	public override bool CheckProceduralPrecondition ()
 	{
-		var trees = UnityEngine.GameObject.FindObjectsOfType<BlacksmithForge> ();
-
-		if (trees.Length == 0) {
-			return false;
-		}
-
-		return true;
+        return COMPONENT_DATABASE.RetrieveComponents<BlacksmithForge>().Count > 0;
 	}
 
-	private BlacksmithForge GetClosestForge (BlacksmithForge[] trees, GameObject agent)
-	{
-		BlacksmithForge closest = null;
-		float closestDist = float.MaxValue;
+    private BlacksmithForge GetClosest()
+    {
+        var trees = COMPONENT_DATABASE.RetrieveComponents<BlacksmithForge>();
 
-		foreach (var tree in trees) {
-			float dist = (tree.gameObject.transform.position - agent.transform.position).magnitude;
+        if (trees.Count == 0)
+        {
+            return null;
+        }
 
-			if (dist < closestDist) {
-				closest = tree;
-				closestDist = dist;
-			}
-		}
+        BlacksmithForge closest = null;
+        float closestDist = float.MaxValue;
 
-		return closest;
-	}
+        foreach (var tree in trees)
+        {
+            float dist = (tree.gameObject.transform.position - transform.position).magnitude;
+
+            if (dist < closestDist)
+            {
+                closest = (BlacksmithForge)tree;
+                closestDist = dist;
+            }
+        }
+
+        return closest;
+    }
 }

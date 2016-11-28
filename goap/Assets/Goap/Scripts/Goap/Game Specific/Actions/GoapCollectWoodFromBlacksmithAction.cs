@@ -3,7 +3,6 @@ using System.Collections;
 
 public class GoapCollectWoodFromBlacksmithAction : GoapAction
 {
-
 	public float workDurationSecs = 2f;
 	public int maxWoodToCollect = 5;
 
@@ -19,9 +18,11 @@ public class GoapCollectWoodFromBlacksmithAction : GoapAction
 		m_Inventory = GetComponent<Inventory> ();
 	}
 
-	void Start ()
-	{
-		AddPrecondition ("hasLogs", false); 
+    protected override void Start()
+    {
+        base.Start();
+
+        AddPrecondition ("hasLogs", false); 
 		AddEffect ("hasLogs", true);
 	}
 
@@ -43,9 +44,7 @@ public class GoapCollectWoodFromBlacksmithAction : GoapAction
 
 	public override void SetTarget ()
 	{
-		var stacks = UnityEngine.GameObject.FindObjectsOfType<BlacksmithResourceDeposit> ();
-
-		var closest = GetClosestBlacksmithDeposit (stacks, gameObject);
+		var closest = GetClosest ();
 		if (closest != null) {
 			m_TargetStack = closest;
 			target = m_TargetStack.transform;
@@ -56,14 +55,7 @@ public class GoapCollectWoodFromBlacksmithAction : GoapAction
 
 	public override bool CheckProceduralPrecondition ()
 	{
-		// find the nearest wood stack that we can collect
-		var stacks = UnityEngine.GameObject.FindObjectsOfType<BlacksmithResourceDeposit> ();
-
-		if (stacks.Length == 0) {
-			return false;
-		}
-
-		return true;
+        return COMPONENT_DATABASE.RetrieveComponents<BlacksmithResourceDeposit>().Count > 0;
 	}
 
 	public override bool Perform ()
@@ -90,17 +82,27 @@ public class GoapCollectWoodFromBlacksmithAction : GoapAction
 	}
 
 
-	private BlacksmithResourceDeposit GetClosestBlacksmithDeposit (BlacksmithResourceDeposit[] stacks, GameObject agent)
+	private BlacksmithResourceDeposit GetClosest ()
 	{
+        var stacks = COMPONENT_DATABASE.RetrieveComponents<BlacksmithResourceDeposit>();
+
+        if(stacks.Count == 0)
+        {
+            return null;
+        }
+
 		BlacksmithResourceDeposit closest = null;
 		float closestDist = float.MaxValue;
 
-		foreach (var stack in stacks) {
+		foreach (var s in stacks) {
+
+            var stack = (BlacksmithResourceDeposit)s;
+
 			if (stack.logs <= 0) {
 				continue;
 			}
 
-			float dist = (stack.gameObject.transform.position - agent.transform.position).magnitude;
+			float dist = (stack.gameObject.transform.position - transform.position).magnitude;
 
 			if (dist < closestDist) {
 				closest = stack;
